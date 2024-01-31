@@ -1,0 +1,100 @@
+---
+title: 'TVie'
+date: '2024-01-31'
+tags: ['portfolio']
+draft: false
+summary: NextJS의 App router 방식을 사용한 웹페이지 입니다. TMDB의 open API를 활용 했으며 Auth0를 통해 유저 기능을 구현했습니다.
+---
+
+# 영화 · TV · 인물 정보 제공 사이트
+
+URL: [https://tvie-one.vercel.app/](https://tvie-one.vercel.app/)  
+Git: [https://github.com/ggj102/Tvie](https://github.com/ggj102/Tvie)
+
+---
+
+## 기간
+
+- 2023.11.2 ~ (진행 중)
+- 2023.11.15 첫 배포
+
+## 프로젝트 소개
+
+![tvie_image](/static/images/tvieImg.PNG)
+
+- TMDB 사이트와 유사한 영화 및 TV 정보 플랫폼을 구현하였습니다. TMDB에서 제공하는 Open API를 기반으로 영화, TV, 인물과 관련된 다양한 정보를 제공하는 페이지를 개발하였습니다.
+
+## 주요 기능
+
+- 영화, TV, 인물 관련 정보 표시
+- 로그인 기능(Auth0 사용)
+- 각종 컨텐츠 및 인물에 대한 상세 정보 제공
+- 검색과 다양한 필터 제공
+- 최근 본 목록 제공
+- 로그인 시 즐겨찾기 제공
+
+## 실행 가이드
+
+```
+// 설치
+npm install
+
+// 개발 모드
+npm run dev
+
+// 빌드
+npm run build
+
+// 프로덕션 모드
+npm run start
+```
+
+## 페이지 구성
+
+- Home
+- Contents (Movie/TV)
+- Person
+- Contents Detail
+- Person Detail
+- Search Results
+- History
+- Favorites
+
+## 기술 스택
+
+<div style={{ display: 'flex', gap: '4px' }}>
+  <img
+    style={{ margin: '0' }}
+    src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=Next.js&logoColor=white"
+    alt="Next.js"
+  />
+  <img
+    style={{ margin: '0' }}
+    src="https://img.shields.io/badge/typescript-3178C6?style=for-the-badge&logo=typescript&logoColor=white"
+    alt="typescript"
+  />
+  <img
+    style={{ margin: '0' }}
+    src="https://img.shields.io/badge/sass-CC6699?style=for-the-badge&logo=sass&logoColor=white"
+    alt="sass"
+  />
+  <img
+    style={{ margin: '0' }}
+    src="https://img.shields.io/badge/mui-007FFF?style=for-the-badge&logo=mui&logoColor=white"
+    alt="mui"
+  />
+  <img
+    style={{ margin: '0' }}
+    src="https://img.shields.io/badge/reacthookform-EC5990?style=for-the-badge&logo=reacthookform&logoColor=white"
+    alt="reacthookform"
+  />
+  <img
+    style={{ margin: '0' }}
+    src="https://img.shields.io/badge/auth0-EB5424?style=for-the-badge&logo=auth0&logoColor=white"
+    alt="auth0"
+  />
+</div>
+
+## 기여
+
+- 단독 프로젝트
