@@ -45,70 +45,82 @@ const computedFields: ComputedFields = {
 /**
  * Count the occurrences of all tags across blog posts and write to json file
  */
-function createTagCount(allBlogs) {
-  const tagCount: Record<string, number> = {}
-  allBlogs.forEach((file) => {
-    if (file.tags && (!isProduction || file.draft !== true)) {
-      file.tags.forEach((tag) => {
-        const formattedTag = slug(tag)
-        if (formattedTag in tagCount) {
-          tagCount[formattedTag] += 1
-        } else {
-          tagCount[formattedTag] = 1
-        }
-      })
-    }
-  })
-  writeFileSync('./app/tag-data.json', JSON.stringify(tagCount))
-}
+// function createTagCount(allBlogs) {
+//   const tagCount: Record<string, number> = {}
+//   allBlogs.forEach((file) => {
+//     if (file.tags && (!isProduction || file.draft !== true)) {
+//       file.tags.forEach((tag) => {
+//         const formattedTag = slug(tag)
+//         if (formattedTag in tagCount) {
+//           tagCount[formattedTag] += 1
+//         } else {
+//           tagCount[formattedTag] = 1
+//         }
+//       })
+//     }
+//   })
+//   writeFileSync('./app/tag-data.json', JSON.stringify(tagCount))
+// }
 
-function createSearchIndex(allBlogs) {
-  if (
-    siteMetadata?.search?.provider === 'kbar' &&
-    siteMetadata.search.kbarConfig.searchDocumentsPath
-  ) {
-    writeFileSync(
-      `public/${siteMetadata.search.kbarConfig.searchDocumentsPath}`,
-      JSON.stringify(allCoreContent(sortPosts(allBlogs)))
-    )
-    console.log('Local search index generated...')
-  }
-}
+// function createSearchIndex(allBlogs) {
+//   if (
+//     siteMetadata?.search?.provider === 'kbar' &&
+//     siteMetadata.search.kbarConfig.searchDocumentsPath
+//   ) {
+//     writeFileSync(
+//       `public/${siteMetadata.search.kbarConfig.searchDocumentsPath}`,
+//       JSON.stringify(allCoreContent(sortPosts(allBlogs)))
+//     )
+//     console.log('Local search index generated...')
+//   }
+// }
 
-export const Blog = defineDocumentType(() => ({
-  name: 'Blog',
-  filePathPattern: 'blog/**/*.mdx',
-  contentType: 'mdx',
-  fields: {
-    title: { type: 'string', required: true },
-    date: { type: 'date', required: true },
-    tags: { type: 'list', of: { type: 'string' }, default: [] },
-    lastmod: { type: 'date' },
-    draft: { type: 'boolean' },
-    summary: { type: 'string' },
-    images: { type: 'json' },
-    authors: { type: 'list', of: { type: 'string' } },
-    layout: { type: 'string' },
-    bibliography: { type: 'string' },
-    canonicalUrl: { type: 'string' },
-  },
-  computedFields: {
-    ...computedFields,
-    structuredData: {
-      type: 'json',
-      resolve: (doc) => ({
-        '@context': 'https://schema.org',
-        '@type': 'BlogPosting',
-        headline: doc.title,
-        datePublished: doc.date,
-        dateModified: doc.lastmod || doc.date,
-        description: doc.summary,
-        image: doc.images ? doc.images[0] : siteMetadata.socialBanner,
-        url: `${siteMetadata.siteUrl}/${doc._raw.flattenedPath}`,
-      }),
+const blogObj = (name) => {
+  const path = name.charAt(0).toLowerCase() + name.slice(1)
+
+  return defineDocumentType(() => ({
+    name,
+    filePathPattern: `${path}/**/*.mdx`,
+    contentType: 'mdx',
+    fields: {
+      title: { type: 'string', required: true },
+      date: { type: 'date', required: true },
+      tags: { type: 'list', of: { type: 'string' }, default: [] },
+      category: { type: 'string', required: true },
+      lastmod: { type: 'date' },
+      draft: { type: 'boolean' },
+      summary: { type: 'string' },
+      images: { type: 'json' },
+      authors: { type: 'list', of: { type: 'string' } },
+      layout: { type: 'string' },
+      bibliography: { type: 'string' },
+      canonicalUrl: { type: 'string' },
     },
-  },
-}))
+    computedFields: {
+      ...computedFields,
+      structuredData: {
+        type: 'json',
+        resolve: (doc) => ({
+          '@context': 'https://schema.org',
+          '@type': 'BlogPosting',
+          headline: doc.title,
+          datePublished: doc.date,
+          dateModified: doc.lastmod || doc.date,
+          description: doc.summary,
+          image: doc.images ? doc.images[0] : siteMetadata.socialBanner,
+          url: `${siteMetadata.siteUrl}/${doc._raw.flattenedPath}`,
+        }),
+      },
+    },
+  }))
+}
+
+export const Blog = blogObj('Blog')
+
+export const Devlog = blogObj('Devlog')
+export const Portfolio = blogObj('Portfolio')
+export const Retrospect = blogObj('Retrospect')
+export const Skills = blogObj('Skills')
 
 export const Authors = defineDocumentType(() => ({
   name: 'Authors',
@@ -130,7 +142,7 @@ export const Authors = defineDocumentType(() => ({
 
 export default makeSource({
   contentDirPath: 'data',
-  documentTypes: [Blog, Authors],
+  documentTypes: [Blog, Authors, Devlog, Portfolio, Retrospect, Skills],
   mdx: {
     cwd: process.cwd(),
     remarkPlugins: [
