@@ -1,12 +1,17 @@
 import 'css/prism.css'
 import 'katex/dist/katex.css'
 
-import PageTitle from '@/components/PageTitle'
 import { components } from '@/components/MDXComponents'
 import { MDXLayoutRenderer } from 'pliny/mdx-components'
 import { sortPosts, coreContent, allCoreContent } from 'pliny/utils/contentlayer'
-import { allBlogs, allAuthors } from 'contentlayer/generated'
-import type { Authors, Blog } from 'contentlayer/generated'
+import {
+  allAuthors,
+  allDevlogs,
+  allPortfolios,
+  allRetrospects,
+  allSkills,
+} from 'contentlayer/generated'
+import type { Authors, Blog, Devlog, Portfolio, Retrospect, Skills } from 'contentlayer/generated'
 import PostSimple from '@/layouts/PostSimple'
 import PostLayout from '@/layouts/PostLayout'
 import PostBanner from '@/layouts/PostBanner'
@@ -21,13 +26,28 @@ const layouts = {
   PostBanner,
 }
 
+type CategoryDataType = {
+  devlog: Devlog[]
+  portfolio: Portfolio[]
+  retrospect: Retrospect[]
+  skills: Skills[]
+}
+
+const categoryData: CategoryDataType = {
+  devlog: allDevlogs,
+  portfolio: allPortfolios,
+  retrospect: allRetrospects,
+  skills: allSkills,
+}
+
 export async function generateMetadata({
   params,
 }: {
   params: { slug: string[] }
 }): Promise<Metadata | undefined> {
-  const slug = decodeURI(params.slug.join('/'))
-  const post = allBlogs.find((p) => p.slug === slug)
+  const [category, slug] = params.slug
+  const mdxData = categoryData[category]
+  const post = mdxData.find((p) => p.slug === slug)
   const authorList = post?.authors || ['default']
   const authorDetails = authorList.map((author) => {
     const authorResults = allAuthors.find((p) => p.slug === author)
@@ -75,15 +95,33 @@ export async function generateMetadata({
 }
 
 export const generateStaticParams = async () => {
-  const paths = allBlogs.map((p) => ({ slug: p.slug.split('/') }))
+  const keys = Object.keys(categoryData)
+  const path = keys.reduce(
+    (
+      acc: {
+        slug: string[]
+      }[],
+      val: string
+    ) => {
+      const length = categoryData[val].length
 
-  return paths
+      for (let i = 0; i < length; i++) {
+        acc.push({ slug: [val, `${categoryData[val][i].slug}`] })
+      }
+      return acc
+    },
+    []
+  )
+
+  return path
 }
 
 export default async function Page({ params }: { params: { slug: string[] } }) {
-  const slug = decodeURI(params.slug.join('/'))
+  const [category, slug] = params.slug
+
   // Filter out drafts in production
-  const sortedCoreContents = allCoreContent(sortPosts(allBlogs))
+  const mdxData = categoryData[category]
+  const sortedCoreContents = allCoreContent(sortPosts(mdxData))
   const postIndex = sortedCoreContents.findIndex((p) => p.slug === slug)
   if (postIndex === -1) {
     return notFound()
@@ -91,7 +129,7 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
 
   const prev = sortedCoreContents[postIndex + 1]
   const next = sortedCoreContents[postIndex - 1]
-  const post = allBlogs.find((p) => p.slug === slug) as Blog
+  const post = mdxData.find((p) => p.slug === slug) as Blog
   const authorList = post?.authors || ['default']
   const authorDetails = authorList.map((author) => {
     const authorResults = allAuthors.find((p) => p.slug === author)

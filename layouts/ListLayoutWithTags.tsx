@@ -2,29 +2,36 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
-import { slug } from 'github-slugger'
 import { formatDate } from 'pliny/utils/formatDate'
-import { CoreContent } from 'pliny/utils/contentlayer'
-import type { Blog } from 'contentlayer/generated'
+import { CoreContent, MDXDocumentDate } from 'pliny/utils/contentlayer'
+import {
+  allDevlogs,
+  allPortfolios,
+  allRetrospects,
+  allSkills,
+  type Blog,
+} from 'contentlayer/generated'
 import Link from '@/components/Link'
 import Tag from '@/components/Tag'
 import siteMetadata from '@/data/siteMetadata'
-import tagData from 'app/tag-data.json'
+// import tagData from 'app/tag-data.json'
 
 interface PaginationProps {
   totalPages: number
   currentPage: number
 }
 interface ListLayoutProps {
-  posts: CoreContent<Blog>[]
+  posts: CoreContent<Blog | MDXDocumentDate>[]
   title: string
-  initialDisplayPosts?: CoreContent<Blog>[]
+  initialDisplayPosts?: CoreContent<Blog | MDXDocumentDate>[]
   pagination?: PaginationProps
 }
 
 function Pagination({ totalPages, currentPage }: PaginationProps) {
   const pathname = usePathname()
-  const basePath = pathname.split('/')[1]
+  const pathSplit = pathname.split('/')
+  const basePath = `${pathSplit[1]}/${pathSplit[2]}/${pathSplit[3]}`
+
   const prevPage = currentPage - 1 > 0
   const nextPage = currentPage + 1 <= totalPages
 
@@ -37,10 +44,7 @@ function Pagination({ totalPages, currentPage }: PaginationProps) {
           </button>
         )}
         {prevPage && (
-          <Link
-            href={currentPage - 1 === 1 ? `/${basePath}/` : `/${basePath}/page/${currentPage - 1}`}
-            rel="prev"
-          >
+          <Link href={`/${basePath}/${currentPage - 1}`} rel="prev">
             Previous
           </Link>
         )}
@@ -53,7 +57,7 @@ function Pagination({ totalPages, currentPage }: PaginationProps) {
           </button>
         )}
         {nextPage && (
-          <Link href={`/${basePath}/page/${currentPage + 1}`} rel="next">
+          <Link href={`/${basePath}/${currentPage + 1}`} rel="next">
             Next
           </Link>
         )}
@@ -69,11 +73,18 @@ export default function ListLayoutWithTags({
   pagination,
 }: ListLayoutProps) {
   const pathname = usePathname()
-  const tagCounts = tagData as Record<string, number>
-  const tagKeys = Object.keys(tagCounts)
-  const sortedTags = tagKeys.sort((a, b) => tagCounts[b] - tagCounts[a])
 
+  const blogCategory: { category: string; name: string; count: number }[] = [
+    { category: 'devlog', name: '개발 일지', count: allDevlogs.length },
+    { category: 'portfolio', name: '포트폴리오', count: allPortfolios.length },
+    { category: 'retrospect', name: '회고록', count: allRetrospects.length },
+    { category: 'skills', name: '기술', count: allSkills.length },
+  ]
   const displayPosts = initialDisplayPosts.length > 0 ? initialDisplayPosts : posts
+
+  // const tagCounts = tagData as Record<string, number>
+  // const tagKeys = Object.keys(tagCounts)
+  // const sortedTags = tagKeys.sort((a, b) => tagCounts[b] - tagCounts[a])
 
   return (
     <>
@@ -86,18 +97,40 @@ export default function ListLayoutWithTags({
         <div className="flex sm:space-x-24">
           <div className="hidden h-full max-h-screen min-w-[280px] max-w-[280px] flex-wrap overflow-auto rounded bg-gray-50 pt-5 shadow-md dark:bg-gray-900/70 dark:shadow-gray-800/40 sm:flex">
             <div className="px-6 py-4">
-              {pathname.startsWith('/blog') ? (
+              {pathname.startsWith('/blog/category/allposts') ? (
                 <h3 className="font-bold uppercase text-primary-500">All Posts</h3>
               ) : (
                 <Link
-                  href={`/blog`}
+                  href={`/blog/category/allposts/1`}
                   className="font-bold uppercase text-gray-700 hover:text-primary-500 dark:text-gray-300 dark:hover:text-primary-500"
                 >
                   All Posts
                 </Link>
               )}
               <ul>
-                {sortedTags.map((t) => {
+                {blogCategory.map((c, idx) => {
+                  const { category, name, count } = c
+                  const pathSplit = pathname.split('/')
+                  const isCurrent = pathSplit[3] === category
+
+                  return (
+                    <li key={`${name}${idx}`} className="my-3">
+                      {isCurrent ? (
+                        <h3 className="inline px-3 py-2 text-sm font-bold uppercase text-primary-500">
+                          {`${name} (${count})`}
+                        </h3>
+                      ) : (
+                        <Link
+                          href={`/blog/category/${category}/1`}
+                          className="px-3 py-2 text-sm font-bold uppercase text-gray-500 hover:text-primary-500 dark:text-gray-300 dark:hover:text-primary-500"
+                        >
+                          {`${name} (${count})`}
+                        </Link>
+                      )}
+                    </li>
+                  )
+                })}
+                {/* {sortedTags.map((t) => {
                   return (
                     <li key={t} className="my-3">
                       {pathname.split('/tags/')[1] === slug(t) ? (
@@ -115,7 +148,7 @@ export default function ListLayoutWithTags({
                       )}
                     </li>
                   )
-                })}
+                })} */}
               </ul>
             </div>
           </div>
@@ -135,7 +168,10 @@ export default function ListLayoutWithTags({
                       <div className="space-y-3">
                         <div>
                           <h2 className="text-2xl font-bold leading-8 tracking-tight">
-                            <Link href={`/${path}`} className="text-gray-900 dark:text-gray-100">
+                            <Link
+                              href={`/blog/${path}`}
+                              className="text-gray-900 dark:text-gray-100"
+                            >
                               {title}
                             </Link>
                           </h2>

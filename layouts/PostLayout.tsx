@@ -101,7 +101,7 @@ export default function PostLayout({ content, authorDetails, next, prev, childre
                 {tags && (
                   <div className="py-4 xl:py-8">
                     <h2 className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                      Tags
+                      category
                     </h2>
                     <div className="flex flex-wrap">
                       {tags.map((tag) => (
@@ -110,7 +110,7 @@ export default function PostLayout({ content, authorDetails, next, prev, childre
                     </div>
                   </div>
                 )}
-                {(next || prev) && (
+                {/* {(next || prev) && (
                   <div className="flex justify-between py-4 xl:block xl:space-y-8 xl:py-8">
                     {prev && prev.path && (
                       <div>
@@ -133,11 +133,11 @@ export default function PostLayout({ content, authorDetails, next, prev, childre
                       </div>
                     )}
                   </div>
-                )}
+                )} */}
               </div>
               <div className="pt-4 xl:pt-8">
                 <Link
-                  href={`/${basePath}`}
+                  href={`/blog/category/allposts/1`}
                   className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
                   aria-label="Back to the blog"
                 >
