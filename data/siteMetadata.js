@@ -3,7 +3,7 @@ const siteMetadata = {
   title: 'Next.js G-Log',
   author: 'ggj102',
   headerTitle: 'Log',
-  description: '개발 블로그',
+  description: 'FE 개발 블로그',
   language: 'ko',
   theme: 'system', // system, dark or light
   siteUrl: 'https://ggj102.github.io/glog/',
