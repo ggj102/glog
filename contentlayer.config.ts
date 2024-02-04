@@ -62,18 +62,18 @@ const computedFields: ComputedFields = {
 //   writeFileSync('./app/tag-data.json', JSON.stringify(tagCount))
 // }
 
-// function createSearchIndex(allBlogs) {
-//   if (
-//     siteMetadata?.search?.provider === 'kbar' &&
-//     siteMetadata.search.kbarConfig.searchDocumentsPath
-//   ) {
-//     writeFileSync(
-//       `public/${siteMetadata.search.kbarConfig.searchDocumentsPath}`,
-//       JSON.stringify(allCoreContent(sortPosts(allBlogs)))
-//     )
-//     console.log('Local search index generated...')
-//   }
-// }
+function createSearchIndex(allBlogs) {
+  if (
+    siteMetadata?.search?.provider === 'kbar' &&
+    siteMetadata.search.kbarConfig.searchDocumentsPath
+  ) {
+    writeFileSync(
+      `public/${siteMetadata.search.kbarConfig.searchDocumentsPath}`,
+      JSON.stringify(allCoreContent(sortPosts(allBlogs)))
+    )
+    console.log('Local search index generated...')
+  }
+}
 
 const blogObj = (name) => {
   const path = name.charAt(0).toLowerCase() + name.slice(1)
@@ -164,9 +164,18 @@ export default makeSource({
 
   // Error: Only URLs with a scheme in: file, data, and node are supported by the default ESM loader. On Windows, absolute paths must be valid file:// URLs. Received protocol 'c:'
   // code: 'ERR_UNSUPPORTED_ESM_URL_SCHEME
-  // onSuccess: async (importData) => {
-  //   const { allBlogs } = await importData()
-  //   createTagCount(allBlogs)
-  //   createSearchIndex(allBlogs)
-  // },
+  onSuccess: async (importData) => {
+    const { allDevlogs, allPortfolios, allRetrospects, allSkills } = await importData()
+
+    const arr = [...allDevlogs, ...allPortfolios, ...allRetrospects, ...allSkills]
+
+    // console.log(process.cwd())
+    // console.log(importData)
+    //
+    // importData().then((res) => {
+    //   console.log(res, '리스폰')
+    // })
+    // createTagCount(arr)
+    createSearchIndex(arr)
+  },
 })
