@@ -2,7 +2,7 @@
 const siteMetadata = {
   title: 'Next.js G-Log',
   author: 'ggj102',
-  headerTitle: 'Log',
+  headerTitle: 'G-Log',
   description: 'FE 개발 블로그',
   language: 'ko',
   theme: 'system', // system, dark or light
