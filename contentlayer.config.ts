@@ -1,5 +1,6 @@
 import { defineDocumentType, ComputedFields, makeSource } from 'contentlayer/source-files'
-import { writeFileSync } from 'fs'
+// import { pathToFileURL } from 'node:url'
+// import { writeFileSync } from 'fs'
 import readingTime from 'reading-time'
 import { slug } from 'github-slugger'
 import path from 'path'
@@ -42,39 +43,19 @@ const computedFields: ComputedFields = {
   toc: { type: 'string', resolve: (doc) => extractTocHeadings(doc.body.raw) },
 }
 
-/**
- * Count the occurrences of all tags across blog posts and write to json file
- */
-// function createTagCount(allBlogs) {
-//   const tagCount: Record<string, number> = {}
-//   allBlogs.forEach((file) => {
-//     if (file.tags && (!isProduction || file.draft !== true)) {
-//       file.tags.forEach((tag) => {
-//         const formattedTag = slug(tag)
-//         if (formattedTag in tagCount) {
-//           tagCount[formattedTag] += 1
-//         } else {
-//           tagCount[formattedTag] = 1
-//         }
-//       })
-//     }
-//   })
-//   writeFileSync('./app/tag-data.json', JSON.stringify(tagCount))
+// function createSearchIndex(allBlogs) {
+//   if (
+//     siteMetadata?.search?.provider === 'kbar' &&
+//     siteMetadata.search.kbarConfig.searchDocumentsPath
+//   ) {
+//     writeFileSync(
+//       // `public/${siteMetadata.search.kbarConfig.searchDocumentsPath}`,
+//       'public/search.json',
+//       JSON.stringify(allCoreContent(sortPosts(allBlogs)))
+//     )
+//     console.log('Local search index generated...')
+//   }
 // }
-
-function createSearchIndex(allBlogs) {
-  if (
-    siteMetadata?.search?.provider === 'kbar' &&
-    siteMetadata.search.kbarConfig.searchDocumentsPath
-  ) {
-    writeFileSync(
-      // `public/${siteMetadata.search.kbarConfig.searchDocumentsPath}`,
-      'public/search.json',
-      JSON.stringify(allCoreContent(sortPosts(allBlogs)))
-    )
-    console.log('Local search index generated...')
-  }
-}
 
 const blogObj = (name) => {
   const path = name.charAt(0).toLowerCase() + name.slice(1)
@@ -163,20 +144,11 @@ export default makeSource({
     ],
   },
 
-  // Error: Only URLs with a scheme in: file, data, and node are supported by the default ESM loader. On Windows, absolute paths must be valid file:// URLs. Received protocol 'c:'
-  // code: 'ERR_UNSUPPORTED_ESM_URL_SCHEME
   onSuccess: async (importData) => {
-    const { allDevlogs, allPortfolios, allRetrospects, allSkills } = await importData()
-
-    const arr = [...allDevlogs, ...allPortfolios, ...allRetrospects, ...allSkills]
-
-    // console.log(process.cwd())
-    // console.log(importData)
-    //
-    // importData().then((res) => {
-    //   console.log(res, '리스폰')
-    // })
-    // createTagCount(arr)
-    createSearchIndex(arr)
+    // const test = await (isProduction
+    //   ? importData()
+    //   : import(`${pathToFileURL(process.cwd()).href}/.contentlayer/generated/index.mjs`))
+    // const arr = [...allDevlogs, ...allPortfolios, ...allRetrospects, ...allSkills]
+    // createSearchIndex(arr)
   },
 })

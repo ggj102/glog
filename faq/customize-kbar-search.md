@@ -19,7 +19,7 @@ export const SearchProvider = ({ children }) => {
   return (
     <KBarSearchProvider
       kbarConfig={{
-        searchDocumentsPath: 'glog/search.json',
+        searchDocumentsPath: 'search.json',
         defaultActions: [
           {
             id: 'homepage',
