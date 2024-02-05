@@ -78,7 +78,7 @@ export default function PostLayout({ content, authorDetails, next, prev, childre
                         <dd>
                           <Link
                             href="https://github.com/ggj102"
-                            className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
+                            className="text-[#5CE1E6] hover:text-[#49b7bb] dark:hover:text-[#b6fdff]"
                           >
                             @Github
                           </Link>
@@ -117,7 +117,7 @@ export default function PostLayout({ content, authorDetails, next, prev, childre
                         <h2 className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
                           Previous Article
                         </h2>
-                        <div className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400">
+                        <div className="text-[#5CE1E6] hover:text-[#49b7bb] dark:hover:text-[#b6fdff]">
                           <Link href={`/${prev.path}`}>{prev.title}</Link>
                         </div>
                       </div>
@@ -127,7 +127,7 @@ export default function PostLayout({ content, authorDetails, next, prev, childre
                         <h2 className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
                           Next Article
                         </h2>
-                        <div className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400">
+                        <div className="text-[#5CE1E6] hover:text-[#49b7bb] dark:hover:text-[#b6fdff]">
                           <Link href={`/${next.path}`}>{next.title}</Link>
                         </div>
                       </div>
@@ -138,7 +138,7 @@ export default function PostLayout({ content, authorDetails, next, prev, childre
               <div className="pt-4 xl:pt-8">
                 <Link
                   href={`/blog/category/allposts/1`}
-                  className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
+                  className="text-[#5CE1E6] hover:text-[#49b7bb] dark:hover:text-[#b6fdff]"
                   aria-label="Back to the blog"
                 >
                   &larr; Back to the blog
