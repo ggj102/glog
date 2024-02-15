@@ -1,0 +1,56 @@
+---
+title: 'App router 기본 사용법'
+date: '2024-02-15'
+tags: ['skills']
+category: 'skills'
+draft: false
+summary: NextJS의 새로운 라우팅 방식인 App router의 기본 사용법.
+---
+
+## 기본 구조
+
+- server와 client의 경계를 명확히 구분한다.
+- 기존 라우팅 방식인 pages router와 파일 구조에서 차이점이 있다.
+- 기본적인 파일 구조
+  ![파일 구조](/static/images/blog/skills/approuter_basic.PNG)
+
+## Server/Client component 사용법
+
+- App router에서 컴포넌트를 사용할 때 Server component와 Client component를 구분해서 사용해야 합니다.
+
+  ### Server component
+
+  - App router의 기본 컴포넌트는 Server component로 취급 된다.
+  - SSR을 구현하기 위한 컴포넌트로서 Client component가 상위에 존재하면 안된다.
+  - 간단한 서버 사이드 구현 방법
+
+    ```jsx
+    async function ServerSideProps() {
+      // 서버에서 처리 할 로직
+      return { props }
+    }
+
+    export default async function Component() {
+      const props = await ServerSideProps()
+
+      return <div></div>
+    }
+    ```
+
+  ### Client component
+
+  - 클라이언트 전용 컴포넌트로서 파일 최상단에 **use client**를 명기 해야한다.
+  - react-hook 또한 Client component에서만 사용 가능하다.
+  - Client component의 하위 구성 요소 또한 **클라이언트 번들의 일부**로 간주되기 때문에 앞서 언급한 Server component 상위에 존재하면 안되는 이유다.
+
+## 사용 시 주의점
+
+- **CSS-in-JS 사용:** 서버 컴포넌트에서는 CSS-in-JS 형태의 CSS 라이브러리를 지원하지 않습니다. 공식 문서에서도 이를 권장하지 않습니다.
+- **Redux 사용:** 서버 컴포넌트에서 Redux를 사용할 경우 Hydration 관련 지원을 하지 않습니다. 따라서 pages router처럼 ServerSideProps에서 dispatch 할 수 없는 문제가 있음.
+
+## 참고 링크
+
+**프로젝트 구조** - https://nextjs.org/docs/getting-started/project-structure
+**파일 컨벤션** - https://nextjs.org/docs/app/api-reference/file-conventions  
+**렌더링** - https://nextjs.org/docs/app/building-your-application/rendering  
+**CSS-in-JS** - https://nextjs.org/docs/app/building-your-application/styling
